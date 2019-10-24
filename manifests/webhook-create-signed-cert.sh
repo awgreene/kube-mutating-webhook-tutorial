@@ -25,30 +25,13 @@ EOF
     exit 1
 }
 
-while [[ $# -gt 0 ]]; do
-    case ${1} in
-        --service)
-            service="$2"
-            shift
-            ;;
-        --secret)
-            secret="$2"
-            shift
-            ;;
-        --namespace)
-            namespace="$2"
-            shift
-            ;;
-        *)
-            usage
-            ;;
-    esac
-    shift
-done
 
-[ -z ${service} ] && service=sidecar-injector-webhook-svc
-[ -z ${secret} ] && secret=sidecar-injector-webhook-certs
-[ -z ${namespace} ] && namespace=default
+
+export service=object-auditor-webhook-svc
+export secret=object-auditor-webhook-certs
+export namespace=webhook-example
+
+echo "namespace ${namespace}" 
 
 if [ ! -x "$(command -v openssl)" ]; then
     echo "openssl not found"

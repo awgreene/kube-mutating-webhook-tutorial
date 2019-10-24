@@ -1,22 +1,25 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sidecar-injector-webhook-deployment
+  name: object-auditor-webhook-deployment
+  namespace: webhook-example
   labels:
-    app: sidecar-injector
+    app: object-auditor
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+        app: object-auditor
   template:
     metadata:
       labels:
-        app: sidecar-injector
+        app: object-auditor
     spec:
       containers:
-        - name: sidecar-injector
-          image: morvencao/sidecar-injector:v1
+        - name: object-auditor
+          image: quay.io/agreene/object-auditor:latest
           imagePullPolicy: IfNotPresent
           args:
-            - -sidecarCfgFile=/etc/webhook/config/sidecarconfig.yaml
             - -tlsCertFile=/etc/webhook/certs/cert.pem
             - -tlsKeyFile=/etc/webhook/certs/key.pem
             - -alsologtostderr
@@ -26,12 +29,7 @@ spec:
             - name: webhook-certs
               mountPath: /etc/webhook/certs
               readOnly: true
-            - name: webhook-config
-              mountPath: /etc/webhook/config
       volumes:
         - name: webhook-certs
           secret:
-            secretName: sidecar-injector-webhook-certs
-        - name: webhook-config
-          configMap:
-            name: sidecar-injector-webhook-configmap
+            secretName: object-auditor-webhook-certs
